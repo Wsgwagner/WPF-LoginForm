@@ -4,78 +4,69 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="900">
 
-    <UserControl.Resources>
-        <Style x:Key="EquipCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="#15FFFFFF"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="8"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#DA34AE"/>
-                    <Setter Property="Background" Value="#25FFFFFF"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-    <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="20">
-                <TextBlock Text="MEUS CÔMODOS E DISPOSITIVOS" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
+            <Button Content="🔄 Atualizar Dados" 
+                    Click="btnAtualizar_Click"
+                    Background="#15FFFFFF" Foreground="White" 
+                    BorderBrush="#28AEED" BorderThickness="1"
+                    Padding="15,8" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
 
-                <ItemsControl x:Name="icComodos">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,0,0,30">
-                                <Border BorderBrush="#462AD8" BorderThickness="0,0,0,2" Margin="0,0,0,15" Padding="0,0,0,5">
-                                    <TextBlock Text="{Binding NomeComodo}" Foreground="#28AEED" FontSize="18" FontWeight="SemiBold"/>
-                                </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="icComodos">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,0,0,30">
+                            <Border BorderBrush="#28AEED" BorderThickness="0,0,0,1" Margin="0,0,0,15">
+                                <TextBlock Text="{Binding NomeComodo}" 
+                                           Foreground="#28AEED" FontSize="22" 
+                                           FontWeight="Bold" Margin="5"/>
+                            </Border>
 
-                                <ItemsControl ItemsSource="{Binding Equipamentos}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Style="{StaticResource EquipCardStyle}" Width="170">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Nome}" Foreground="White" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding Tipo}" Foreground="DarkGray" FontSize="11" Margin="0,2,0,12"/>
-
-                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                        <Ellipse Width="10" Height="10" Margin="0,0,8,0">
-                                                            <Ellipse.Style>
-                                                                <Style TargetType="Ellipse">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Status}" Value="Ativo">
-                                                                            <Setter Property="Fill" Value="#00FF7F"/>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Status}" Value="Inativo">
-                                                                            <Setter Property="Fill" Value="#FF3131"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Ellipse.Style>
-                                                        </Ellipse>
-                                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="12"/>
-                                                    </StackPanel>
+                            <ItemsControl ItemsSource="{Binding Equipamentos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Width="260" Height="110" Background="#15FFFFFF" 
+                                                CornerRadius="12" Margin="0,0,15,15" 
+                                                BorderThickness="1" BorderBrush="#20FFFFFF" Padding="15">
+                                            <Grid>
+                                                <StackPanel VerticalAlignment="Top">
+                                                    <TextBlock Text="{Binding Nome}" Foreground="White" 
+                                                               FontSize="17" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Tipo}" Foreground="Gray" FontSize="12"/>
                                                 </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                                                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+                                                    <Ellipse Width="8" Height="8" Fill="#28AEED" Margin="0,0,6,0"/>
+                                                    <TextBlock Text="{Binding Status}" Foreground="#28AEED" FontSize="11"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </UserControl>

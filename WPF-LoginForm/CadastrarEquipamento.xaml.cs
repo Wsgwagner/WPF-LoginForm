@@ -9,7 +9,8 @@ namespace WPF_LoginForm.Views
     public partial class CadastrarEquipamento : UserControl
     {
         // String de conexão para o servidor TDS do Senac
-        private readonly string connectionString = @"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        private readonly string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        //@"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
 
         public CadastrarEquipamento()
         {

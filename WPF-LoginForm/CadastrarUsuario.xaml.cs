@@ -12,7 +12,8 @@ namespace WPF_LoginForm.Views
     public partial class CadastrarUsuario : UserControl
     {
         // String de conexão com seu servidor SQLEXPRESS
-        private readonly string connectionString = @"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        private readonly string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        //@"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
 
         public CadastrarUsuario()
         {

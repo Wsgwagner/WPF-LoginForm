@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="WPF_LoginForm.Views.ComodosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style x:Key="EquipCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#15FFFFFF"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#DA34AE"/>
+                    <Setter Property="Background" Value="#25FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20">
+                <TextBlock Text="MEUS CÔMODOS E DISPOSITIVOS" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <ItemsControl x:Name="icComodos">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,30">
+                                <Border BorderBrush="#462AD8" BorderThickness="0,0,0,2" Margin="0,0,0,15" Padding="0,0,0,5">
+                                    <TextBlock Text="{Binding NomeComodo}" Foreground="#28AEED" FontSize="18" FontWeight="SemiBold"/>
+                                </Border>
+
+                                <ItemsControl ItemsSource="{Binding Equipamentos}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource EquipCardStyle}" Width="170">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Nome}" Foreground="White" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Tipo}" Foreground="DarkGray" FontSize="11" Margin="0,2,0,12"/>
+
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Width="10" Height="10" Margin="0,0,8,0">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Ativo">
+                                                                            <Setter Property="Fill" Value="#00FF7F"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Inativo">
+                                                                            <Setter Property="Fill" Value="#FF3131"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="12"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

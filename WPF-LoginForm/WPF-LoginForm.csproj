@@ -58,8 +58,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CadastrarEquipamento.xaml.cs">
+      <DependentUpon>CadastrarEquipamento.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CadastrarUsuario.xaml.cs">
+      <DependentUpon>CadastrarUsuario.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Cadastro.xaml.cs">
       <DependentUpon>Cadastro.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ComodosView.xaml.cs">
+      <DependentUpon>ComodosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\BindablePasswordBox.xaml.cs">
       <DependentUpon>BindablePasswordBox.xaml</DependentUpon>
@@ -83,7 +92,19 @@
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Page Include="CadastrarEquipamento.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CadastrarUsuario.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Cadastro.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ComodosView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

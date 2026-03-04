@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace WPF_LoginForm.Views
 {
@@ -12,32 +13,83 @@ namespace WPF_LoginForm.Views
         public CadastrarResidencia()
         {
             InitializeComponent();
+            // Chamamos a busca assim que o componente termina de carregar
+            this.Loaded += CadastrarResidencia_Loaded;
         }
 
-        private string GerarToken()
+        private void CadastrarResidencia_Loaded(object sender, RoutedEventArgs e)
         {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            VerificarResidenciaExistente();
+        }
+
+        private void VerificarResidenciaExistente()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(strCon))
+                {
+                    con.Open();
+                    // Buscamos os dados da residência vinculada ao usuário atual
+                    string sql = @"SELECT r.NomeResidencia, r.Endereco, r.Numero, r.Bairro, r.Cidade, r.CodigoVinculo 
+                                 FROM Residencias r 
+                                 INNER JOIN Users u ON u.ResidenciaId = r.Id 
+                                 WHERE u.Id = @userId";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@userId", SessaoSistema.UsuarioId);
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                // Se encontrou, preenche os campos
+                                txtNomeResidencia.Text = dr["NomeResidencia"].ToString();
+                                txtEndereco.Text = dr["Endereco"].ToString();
+                                txtNumero.Text = dr["Numero"].ToString();
+                                txtBairro.Text = dr["Bairro"].ToString();
+                                txtCidade.Text = dr["Cidade"].ToString();
+
+                                // Fixa os dados na interface
+                                FixarDadosInterface(dr["CodigoVinculo"].ToString());
+
+                                // Ajusta o título para indicar visualização
+                                if (this.FindName("lblTitulo") is TextBlock lbl)
+                                    lbl.Text = "SUA RESIDÊNCIA CADASTRADA";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar dados existentes: " + ex.Message);
+            }
+        }
+
+        private string GerarTokenResidencia()
+        {
+            const string caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             Random random = new Random();
-            char[] token = new char[6];
+            char[] resultado = new char[6];
             for (int i = 0; i < 6; i++)
             {
-                token[i] = chars[random.Next(chars.Length)];
+                resultado[i] = caracteres[random.Next(caracteres.Length)];
             }
-            return new string(token);
+            return new string(resultado);
         }
 
         private void btnSalvarResidencia_Click(object sender, RoutedEventArgs e)
         {
             string nome = txtNomeResidencia.Text.Trim();
             string rua = txtEndereco.Text.Trim();
-            string numero = txtNumero.Text.Trim();
-            string bairro = txtBairro.Text.Trim();
-            string cidade = txtCidade.Text.Trim();
-            string codigo = GerarToken();
+            string num = txtNumero.Text.Trim();
+            string bai = txtBairro.Text.Trim();
+            string cid = txtCidade.Text.Trim();
+            string codigoGerado = GerarTokenResidencia();
 
             if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(rua))
             {
-                MessageBox.Show("Nome e Logradouro são campos obrigatórios!");
+                MessageBox.Show("Campos obrigatórios vazios!");
                 return;
             }
 
@@ -46,60 +98,61 @@ namespace WPF_LoginForm.Views
                 using (SqlConnection con = new SqlConnection(strCon))
                 {
                     con.Open();
-                    using (SqlTransaction tran = con.BeginTransaction())
+                    using (SqlTransaction transacao = con.BeginTransaction())
                     {
                         try
                         {
-                            // 1. Inserir Residência e obter o ID gerado
                             string sqlRes = @"INSERT INTO Residencias (NomeResidencia, Endereco, Numero, Bairro, Cidade, CodigoVinculo) 
                                              VALUES (@nome, @rua, @num, @bai, @cid, @cod); 
                                              SELECT SCOPE_IDENTITY();";
 
-                            int idGerado;
-                            using (SqlCommand cmd = new SqlCommand(sqlRes, con, tran))
+                            int idResidencia;
+                            using (SqlCommand cmd = new SqlCommand(sqlRes, con, transacao))
                             {
                                 cmd.Parameters.AddWithValue("@nome", nome);
                                 cmd.Parameters.AddWithValue("@rua", rua);
-                                cmd.Parameters.AddWithValue("@num", numero);
-                                cmd.Parameters.AddWithValue("@bai", bairro);
-                                cmd.Parameters.AddWithValue("@cid", cidade);
-                                cmd.Parameters.AddWithValue("@cod", codigo);
-                                idGerado = Convert.ToInt32(cmd.ExecuteScalar());
+                                cmd.Parameters.AddWithValue("@num", num);
+                                cmd.Parameters.AddWithValue("@bai", bai);
+                                cmd.Parameters.AddWithValue("@cid", cid);
+                                cmd.Parameters.AddWithValue("@cod", codigoGerado);
+                                idResidencia = Convert.ToInt32(cmd.ExecuteScalar());
                             }
 
-                            // 2. Vincular o usuário da sessão à residência
                             string sqlUser = "UPDATE Users SET ResidenciaId = @resId WHERE Id = @userId";
-                            using (SqlCommand cmdUser = new SqlCommand(sqlUser, con, tran))
+                            using (SqlCommand cmdUser = new SqlCommand(sqlUser, con, transacao))
                             {
-                                cmdUser.Parameters.AddWithValue("@resId", idGerado);
+                                cmdUser.Parameters.AddWithValue("@resId", idResidencia);
                                 cmdUser.Parameters.AddWithValue("@userId", SessaoSistema.UsuarioId);
                                 cmdUser.ExecuteNonQuery();
                             }
 
-                            tran.Commit();
-
-                            // 3. Atualizar Sessão e UI
-                            SessaoSistema.ResidenciaId = idGerado;
+                            transacao.Commit();
+                            SessaoSistema.ResidenciaId = idResidencia;
                             SessaoSistema.NomeResidencia = nome;
 
-                            txtCodigoVinculo.Text = codigo;
-                            borderCodigo.Visibility = Visibility.Visible;
-                            btnSalvar.IsEnabled = false;
-
-                            MessageBox.Show("Residência registrada com sucesso!");
+                            FixarDadosInterface(codigoGerado);
+                            MessageBox.Show("Residência vinculada!");
                         }
-                        catch (Exception ex)
-                        {
-                            tran.Rollback();
-                            MessageBox.Show("Erro ao processar transação: " + ex.Message);
-                        }
+                        catch { transacao.Rollback(); throw; }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro de conexão: " + ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show("Erro: " + ex.Message); }
+        }
+
+        private void FixarDadosInterface(string codigo)
+        {
+            txtNomeResidencia.IsReadOnly = true;
+            txtEndereco.IsReadOnly = true;
+            txtNumero.IsReadOnly = true;
+            txtBairro.IsReadOnly = true;
+            txtCidade.IsReadOnly = true;
+
+            txtNomeResidencia.Foreground = Brushes.LightGreen;
+            txtCodigoVinculo.Text = codigo;
+            borderCodigo.Visibility = Visibility.Visible;
+            btnSalvar.IsEnabled = false;
+            btnSalvar.Content = "RESIDÊNCIA VINCULADA";
         }
     }
 }

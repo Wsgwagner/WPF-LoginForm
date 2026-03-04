@@ -9,9 +9,9 @@
     <Grid Margin="20">
         <Border CornerRadius="15" Background="#15FFFFFF" Padding="30">
             <StackPanel x:Name="ContainerPrincipal">
-                <TextBlock Text="CADASTRAR NOVA RESIDÊNCIA" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,0,0,25"/>
+                <TextBlock x:Name="lblTitulo" Text="CADASTRAR NOVA RESIDÊNCIA" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,0,0,25"/>
 
-                <TextBlock Text="NOME DA RESIDÊNCIA (EX: MINHA CASA)" Foreground="DarkGray" Margin="0,0,0,5"/>
+                <TextBlock Text="NOME DA RESIDÊNCIA" Foreground="DarkGray" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtNomeResidencia" Height="35" Background="#20FFFFFF" Foreground="White" 
                          BorderThickness="0,0,0,1" VerticalContentAlignment="Center" Padding="5,0" Margin="0,0,0,15"/>
 
@@ -45,17 +45,17 @@
                     </StackPanel>
                 </Grid>
 
-                <Border x:Name="borderCodigo" Visibility="Collapsed" Background="#1500FF00" CornerRadius="10" Padding="15" Margin="0,0,0,25">
+                <Border x:Name="borderCodigo" Visibility="Collapsed" Background="#2000FF00" CornerRadius="10" Padding="15" Margin="0,0,0,25" BorderBrush="#FF00FF00" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="CÓDIGO DE VÍNCULO GERADO" Foreground="#FF00FF00" FontWeight="Bold" HorizontalAlignment="Center" FontSize="12"/>
-                        <TextBox x:Name="txtCodigoVinculo" IsReadOnly="True" FontSize="28" TextAlignment="Center" 
+                        <TextBlock Text="CÓDIGO DE ACESSO FIXADO" Foreground="#FF00FF00" FontWeight="Bold" HorizontalAlignment="Center" FontSize="12"/>
+                        <TextBox x:Name="txtCodigoVinculo" IsReadOnly="True" FontSize="32" TextAlignment="Center" 
                                  Background="Transparent" Foreground="White" BorderThickness="0" FontWeight="ExtraBold"
-                                 Text="------" Margin="5"/>
-                        <TextBlock Text="COMPARTILHE ESTE CÓDIGO COM SUA FAMÍLIA" Foreground="DarkGray" FontSize="10" HorizontalAlignment="Center"/>
+                                 Margin="5" SelectionBrush="{x:Null}"/>
+                        <TextBlock Text="ESTE CÓDIGO É ÚNICO PARA SUA RESIDÊNCIA" Foreground="White" Opacity="0.6" FontSize="10" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Border>
 
-                <Button x:Name="btnSalvar" Content="SALVAR E GERAR CÓDIGO" Click="btnSalvarResidencia_Click" Height="45" 
+                <Button x:Name="btnSalvar" Content="CONFIRMAR CADASTRO" Click="btnSalvarResidencia_Click" Height="45" 
                         Background="#462AD8" Foreground="White" FontWeight="Bold" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

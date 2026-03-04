@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Linq;
 using WPF_LoginForm.Views;
 
 namespace WPF_LoginForm.ViewModels
@@ -14,7 +13,7 @@ namespace WPF_LoginForm.ViewModels
         private string _username;
         private string _password;
         private string _errorMessage;
-        private readonly string _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        private readonly string strCon = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
 
         public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
         public string Password { get => _password; set { _password = value; OnPropertyChanged(); } }
@@ -24,58 +23,65 @@ namespace WPF_LoginForm.ViewModels
 
         public LoginViewModel()
         {
-            LoginCommand = new RelayCommand(ExecuteLogin);
+            LoginCommand = new ViewModelCommand(ExecuteLoginCommand, CanExecuteLoginCommand);
         }
 
-        private void ExecuteLogin(object obj)
-        {
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
-            {
-                ErrorMessage = "Preencha os campos!";
-                return;
-            }
+        private bool CanExecuteLoginCommand(object obj) => !string.IsNullOrWhiteSpace(Username) && Password?.Length >= 3;
 
+        private void ExecuteLoginCommand(object obj)
+        {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlConnection con = new SqlConnection(strCon))
                 {
                     con.Open();
-                    string sql = "SELECT Id, Name, Password, ResidenciaId FROM Users WHERE Username = @user";
+                    // Busca o AccessLevel para destravar o acesso do Wagner como ADM
+                    string sql = "SELECT Id, Name, AccessLevel, ResidenciaId FROM Users WHERE (Username = @login OR Email = @login) AND Password = @pass";
+
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        cmd.Parameters.AddWithValue("@user", Username);
+                        cmd.Parameters.AddWithValue("@login", Username);
+                        cmd.Parameters.AddWithValue("@pass", GerarHash(Password));
+
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
                             if (dr.Read())
                             {
-                                if (VerifyHash(Password, dr["Password"].ToString()))
-                                {
-                                    SessaoSistema.UsuarioId = (int)dr["Id"];
-                                    SessaoSistema.Nome = dr["Name"].ToString();
-                                    SessaoSistema.ResidenciaId = dr["ResidenciaId"] as int?;
+                                // Alimenta a SessaoSistema
+                                SessaoSistema.UsuarioId = Convert.ToInt32(dr["Id"]);
+                                SessaoSistema.Nome = dr["Name"].ToString();
+                                SessaoSistema.AccessLevel = dr["AccessLevel"].ToString();
+                                SessaoSistema.ResidenciaId = dr["ResidenciaId"] as int?;
 
-                                    MainView main = new MainView();
-                                    main.Show();
-                                    Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is LoginView)?.Close();
-                                }
-                                else ErrorMessage = "Senha incorreta!";
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    // Certifique-se que o nome da sua tela principal é MainWindow
+                                    var principal = new MainView();
+                                    principal.Show();
+
+                                    // Fecha a janela de login
+                                    foreach (Window window in Application.Current.Windows)
+                                    {
+                                        if (window is LoginView) window.Close();
+                                    }
+                                });
                             }
-                            else ErrorMessage = "Usuário não encontrado!";
+                            else { ErrorMessage = "* Usuário ou senha incorretos."; }
                         }
                     }
                 }
             }
-            catch (Exception ex) { ErrorMessage = "Erro: " + ex.Message; }
+            catch (Exception ex) { ErrorMessage = "* Erro: " + ex.Message; }
         }
 
-        private bool VerifyHash(string input, string hash)
+        private string GerarHash(string senha)
         {
-            using (SHA256 sha = SHA256.Create())
+            using (SHA256 sha256 = SHA256.Create())
             {
-                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(senha));
                 StringBuilder sb = new StringBuilder();
                 foreach (byte b in bytes) sb.Append(b.ToString("x2"));
-                return sb.ToString().Equals(hash, StringComparison.OrdinalIgnoreCase);
+                return sb.ToString();
             }
         }
     }

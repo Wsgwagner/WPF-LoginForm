@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace WPF_LoginForm.Views
@@ -19,21 +18,15 @@ namespace WPF_LoginForm.Views
 
         private void btnCadastro_Click_1(object sender, RoutedEventArgs e)
         {
-            // Abre a tela de Cadastro (certifique-se de que o nome da classe está correto)
-            WPF_LoginForm.Cadastro tela = new WPF_LoginForm.Cadastro();
+            // Abre sua tela de cadastro
+            var tela = new Cadastro();
             tela.ShowDialog();
         }
 
         private void btnEsqueciSenha_Click(object sender, RoutedEventArgs e)
         {
-            // Abre a tela de RecuperarSenha que está na pasta Views
-            RecuperarSenha tela = new RecuperarSenha();
+            var tela = new RecuperarSenha();
             tela.ShowDialog();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

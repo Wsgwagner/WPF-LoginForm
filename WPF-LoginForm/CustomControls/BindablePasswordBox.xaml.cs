@@ -1,15 +1,13 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace WPF_LoginForm.CustomControls
 {
     public partial class BindablePasswordBox : UserControl
     {
-        // Propriedade que o ViewModel vai acessar
         public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register("Password", typeof(string), typeof(BindablePasswordBox),
-                new PropertyMetadata(string.Empty));
+                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordPropertyChanged));
 
         public string Password
         {
@@ -19,25 +17,23 @@ namespace WPF_LoginForm.CustomControls
 
         public BindablePasswordBox()
         {
-            // Criação manual do controle para simplificar
-            PasswordBox passwordBox = new PasswordBox();
-            passwordBox.PasswordChanged += OnPasswordChanged;
-            passwordBox.Background = System.Windows.Media.Brushes.Transparent;
-            passwordBox.Foreground = System.Windows.Media.Brushes.White;
-            passwordBox.BorderThickness = new Thickness(0, 0, 0, 2);
-            passwordBox.BorderBrush = System.Windows.Media.Brushes.DarkGray;
-
-            this.Content = passwordBox;
+            InitializeComponent();
         }
 
-        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        private static void OnPasswordPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Password = ((PasswordBox)sender).Password;
+            if (d is BindablePasswordBox dpb)
+            {
+                if (dpb.passwordBox.Password != (string)e.NewValue)
+                {
+                    dpb.passwordBox.Password = (string)e.NewValue;
+                }
+            }
         }
 
-        internal void Clear()
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Password = passwordBox.Password;
         }
     }
 }

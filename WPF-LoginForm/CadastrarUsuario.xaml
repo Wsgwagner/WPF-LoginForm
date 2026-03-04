@@ -4,66 +4,41 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="600">
 
     <Grid Margin="20,-49,20,20">
-        <Border Background="#15FFFFFF" CornerRadius="20" Padding="40" MaxWidth="600" HorizontalAlignment="Left" VerticalAlignment="Top" Height="550">
+        <Border Background="#15FFFFFF" CornerRadius="20" Padding="40" MaxWidth="600" HorizontalAlignment="Left" VerticalAlignment="Top" Height="650">
             <StackPanel>
-                <TextBlock Text="👤 NOVO USUÁRIO" Foreground="#28AEED" FontSize="22" FontWeight="Bold" Margin="0,0,0,10"/>
-                <TextBlock Text="Preencha os dados para acesso ao sistema IA HOME." Foreground="LightGray" FontSize="12" Margin="0,0,0,30"/>
+                <TextBlock Text="👤 NOVO UTILIZADOR FAMILIAR" Foreground="#28AEED" FontSize="22" FontWeight="Bold" Margin="0,0,0,10"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="Nome" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <TextBox x:Name="txtNome" Style="{StaticResource ModernTextBox}"/>
+                        <TextBlock Text="Nome" Foreground="White" Opacity="0.7"/>
+                        <TextBox x:Name="txtNomeUser" Height="35" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0"/>
                     </StackPanel>
-
                     <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="Sobrenome" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <TextBox x:Name="txtSobrenome" Style="{StaticResource ModernTextBox}" TextChanged="txtSobrenome_TextChanged"/>
+                        <TextBlock Text="Sobrenome" Foreground="White" Opacity="0.7"/>
+                        <TextBox x:Name="txtSobrenomeUser" Height="35" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0"/>
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="E-mail" Foreground="White" Opacity="0.7" FontSize="12" Margin="0,10,0,0"/>
-                <TextBox x:Name="txtEmail" Style="{StaticResource ModernTextBox}" TextChanged="txtEmail_TextChanged"/>
+                <TextBlock Text="E-mail / Login" Foreground="White" Opacity="0.7" Margin="0,15,0,0"/>
+                <TextBox x:Name="txtEmailUser" Height="35" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0"/>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <TextBlock Text="Telefone" Foreground="White" Opacity="0.7" Margin="0,15,0,0"/>
+                <TextBox x:Name="txtPhoneUser" Height="35" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0"/>
 
-                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="Telefone" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <TextBox x:Name="txtTelefone" Style="{StaticResource ModernTextBox}" TextChanged="txtTelefone_TextChanged"/>
-                    </StackPanel>
+                <TextBlock Text="Código da Residência (6 dígitos)" Foreground="#28AEED" FontWeight="Bold" Margin="0,15,0,0"/>
+                <TextBox x:Name="txtCodigoVinculo" Height="35" Background="#30FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0" MaxLength="6" BorderBrush="#28AEED"/>
 
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="Nível de Acesso" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <ComboBox x:Name="cbNivelAcesso" Height="35" Margin="0,5,0,0" SelectionChanged="cbNivelAcesso_SelectionChanged">
-                            <ComboBoxItem Content="Administrador" IsSelected="True"/>
-                            <ComboBoxItem Content="Morador"/>
-                            <ComboBoxItem Content="Visitante"/>
-                        </ComboBox>
-                    </StackPanel>
-                </Grid>
+                <TextBlock Text="Senha" Foreground="White" Opacity="0.7" Margin="0,15,0,0"/>
+                <PasswordBox x:Name="txtSenhaUser" Height="35" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="5,0"/>
 
-                <TextBlock Text="Senha" Foreground="White" Opacity="0.7" FontSize="12" Margin="0,10,0,0"/>
-                <PasswordBox x:Name="txtSenha" Height="35" Background="#20FFFFFF" Foreground="White" BorderBrush="#40FFFFFF" BorderThickness="1" Margin="0,5,0,30"/>
-
-                <Button Content="CONCLUIR CADASTRO" 
-                        Height="45" 
-                        Background="#462AD8" 
-                        Foreground="White" 
-                        FontSize="14" 
-                        FontWeight="Bold" 
-                        BorderThickness="0"
-                        Click="BtnSalvar_Click">
+                <Button Content="CONCLUIR E VINCULAR" Height="45" Background="#462AD8" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,30,0,0" Click="BtnSalvarFamiliar_Click">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="10"/>

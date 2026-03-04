@@ -64,18 +64,23 @@
     <Compile Include="CadastrarEquipamento.xaml.cs">
       <DependentUpon>CadastrarEquipamento.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CadastrarResidencia.xaml.cs">
+      <DependentUpon>CadastrarResidencia.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CadastrarUsuario.xaml.cs">
       <DependentUpon>CadastrarUsuario.xaml</DependentUpon>
     </Compile>
     <Compile Include="Cadastro.xaml.cs">
       <DependentUpon>Cadastro.xaml</DependentUpon>
     </Compile>
+    <Compile Include="comodo.cs" />
     <Compile Include="ComodosView.xaml.cs">
       <DependentUpon>ComodosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\BindablePasswordBox.xaml.cs">
       <DependentUpon>BindablePasswordBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EquipamentoModel.cs" />
     <Compile Include="GerenciarDados.xaml.cs">
       <DependentUpon>GerenciarDados.xaml</DependentUpon>
     </Compile>
@@ -84,8 +89,13 @@
     <Compile Include="Models\IUserRepository.cs" />
     <Compile Include="Models\UserAccountModel.cs" />
     <Compile Include="Models\UserModel.cs" />
+    <Compile Include="RecuperarSenha.xaml.cs">
+      <DependentUpon>RecuperarSenha.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="SessaoSistema.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -101,6 +111,10 @@
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Page Include="CadastrarEquipamento.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CadastrarResidencia.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,6 +135,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GerenciarDados.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RecuperarSenha.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

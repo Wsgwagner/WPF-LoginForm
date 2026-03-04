@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,70 +7,43 @@ namespace WPF_LoginForm.Views
 {
     public partial class CadastrarEquipamento : UserControl
     {
-        // String de conexão para o servidor TDS do Senac
-        private readonly string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
-        //@"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        private readonly string strCon = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
 
         public CadastrarEquipamento()
         {
             InitializeComponent();
         }
 
-        private void BtnSalvarEquip_Click(object sender, RoutedEventArgs e)
+        private void BtnSalvarEquipamento_Click(object sender, RoutedEventArgs e)
         {
-            // Validação de segurança
-            if (string.IsNullOrWhiteSpace(txtNomeEquip.Text) || string.IsNullOrWhiteSpace(cbTipo.Text))
+            if (string.IsNullOrWhiteSpace(txtNomeEquip.Text))
             {
-                MessageBox.Show("Preencha o nome e o tipo do equipamento.", "IA HOME", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Dê um nome ao dispositivo!");
                 return;
             }
 
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(strCon))
                 {
                     con.Open();
-                    string query = "INSERT INTO Equipamentos (Nome, Tipo, Comodo, Status) VALUES (@Nome, @Tipo, @Comodo, @Status)";
+                    string sql = "INSERT INTO Equipamentos (Nome, Tipo, Comodo, Status, ResidenciaId) VALUES (@nome, @tipo, @comodo, 'Desligado', @resId)";
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        cmd.Parameters.Add("@Nome", SqlDbType.VarChar).Value = txtNomeEquip.Text;
-
-                        // Captura o texto digitado ou selecionado no ComboBox editável
-                        cmd.Parameters.Add("@Tipo", SqlDbType.VarChar).Value = cbTipo.Text;
-
-                        cmd.Parameters.Add("@Comodo", SqlDbType.VarChar).Value = txtComodo.Text;
-
-                        string status = rbAtivo.IsChecked == true ? "Ativo" : "Inativo";
-                        cmd.Parameters.Add("@Status", SqlDbType.VarChar).Value = status;
+                        cmd.Parameters.AddWithValue("@nome", txtNomeEquip.Text.Trim());
+                        cmd.Parameters.AddWithValue("@tipo", (cbTipo.SelectedItem as ComboBoxItem)?.Content.ToString());
+                        cmd.Parameters.AddWithValue("@comodo", (cbComodo.SelectedItem as ComboBoxItem)?.Content.ToString());
+                        // Usa a sessão para vincular à casa do Wagner
+                        cmd.Parameters.AddWithValue("@resId", SessaoSistema.ResidenciaId);
 
                         cmd.ExecuteNonQuery();
+                        MessageBox.Show("Equipamento cadastrado com sucesso!");
+                        txtNomeEquip.Clear();
                     }
                 }
-
-                MessageBox.Show("Equipamento '" + txtNomeEquip.Text + "' salvo com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                LimparCampos();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao salvar no SQL Server: " + ex.Message, "Erro Técnico", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (Exception ex) { MessageBox.Show("Erro: " + ex.Message); }
         }
-
-        private void LimparCampos()
-        {
-            txtNomeEquip.Clear();
-            txtComodo.Clear();
-            cbTipo.Text = ""; // Limpa o texto digitado no ComboBox
-            rbAtivo.IsChecked = true;
-            txtNomeEquip.Focus();
-        }
-
-        // Métodos obrigatórios para os eventos do XAML
-        private void txtNomeEquip_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void cbTipo_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
-        private void txtComodo_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void rbAtivo_Checked(object sender, RoutedEventArgs e) { }
-        private void rbInativo_Checked(object sender, RoutedEventArgs e) { }
     }
 }

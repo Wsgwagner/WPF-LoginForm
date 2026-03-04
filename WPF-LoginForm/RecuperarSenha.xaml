@@ -1,0 +1,46 @@
+﻿<Window x:Class="WPF_LoginForm.Views.RecuperarSenha"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Recuperar Senha" Height="400" Width="400"
+        WindowStyle="None" Background="Transparent" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen">
+
+    <Border CornerRadius="15" Background="#1B1448" BorderThickness="2" BorderBrush="#462AD8">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="RECUPERAR ACESSO" Foreground="White" 
+                       FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,20"/>
+
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <TextBlock Text="E-mail Cadastrado" Foreground="DarkGray" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtEmail" Height="35" Background="#20FFFFFF" Foreground="White" 
+                         BorderThickness="0,0,0,1" VerticalContentAlignment="Center" Padding="5,0"/>
+
+                <TextBlock Text="Nova Senha" Foreground="DarkGray" Margin="0,20,0,5"/>
+                <PasswordBox x:Name="txtNovaSenha" Height="35" Background="#20FFFFFF" Foreground="White" 
+                             BorderThickness="0,0,0,1" VerticalContentAlignment="Center" Padding="5,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,20,0,10">
+                <Button Content="ATUALIZAR SENHA" Click="BtnAtualizar_Click" Height="40" 
+                        Background="#462AD8" Foreground="White" FontWeight="Bold">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="CANCELAR" Click="BtnFechar_Click" Background="Transparent" 
+                        Foreground="Gray" BorderThickness="0" Margin="0,10,0,0" Cursor="Hand"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

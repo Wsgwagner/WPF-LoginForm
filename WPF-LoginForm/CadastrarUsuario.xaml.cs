@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,107 +9,85 @@ namespace WPF_LoginForm.Views
 {
     public partial class CadastrarUsuario : UserControl
     {
-        // String de conexão com seu servidor SQLEXPRESS
-        private readonly string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
-        //@"Server=TQR216780\SQLEXPRESS;Database=WpfLogin;User Id=tds2;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+        private readonly string conexaoDb = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
 
         public CadastrarUsuario()
         {
             InitializeComponent();
         }
 
-        // --- MÉTODO PARA VALIDAR FORMATO DE EMAIL ---
-        private bool IsEmailValid(string email)
+        private void BtnSalvarFamiliar_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(email)) return false;
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
-        }
-
-        // --- MÉTODO PARA CRIPTOGRAFAR A SENHA ---
-        private string ComputeHash(string input)
-        {
-            if (string.IsNullOrEmpty(input)) return "";
-            using (SHA256 sha256 = SHA256.Create())
+            if (string.IsNullOrEmpty(txtCodigoVinculo.Text))
             {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in bytes) builder.Append(b.ToString("x2"));
-                return builder.ToString();
-            }
-        }
-
-        // --- MÉTODO PARA LIMPAR CAMPOS APÓS SALVAR ---
-        private void LimparCampos()
-        {
-            txtNome.Clear();
-            txtSobrenome.Clear();
-            txtEmail.Clear();
-            txtTelefone.Clear();
-            txtSenha.Clear(); // Certifique-se que o PasswordBox no XAML chama-se txtSenha
-            cbNivelAcesso.SelectedIndex = -1;
-        }
-
-        private void BtnSalvar_Click(object sender, RoutedEventArgs e)
-        {
-            // 1. Validações Básicas de Preenchimento
-            if (string.IsNullOrWhiteSpace(txtNome.Text) || string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtSenha.Password))
-            {
-                MessageBox.Show("Nome, E-mail e Senha são campos obrigatórios.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("O código da residência é obrigatório para o vínculo!");
                 return;
             }
 
-            // 2. Validação de formato de E-mail
-            if (!IsEmailValid(txtEmail.Text))
-            {
-                MessageBox.Show("Por favor, insira um e-mail válido.", "E-mail Inválido", MessageBoxButton.OK, MessageBoxImage.Warning);
-                txtEmail.Focus();
-                return;
-            }
-
-            // 3. Inserção no Banco de Dados
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(conexaoDb))
                 {
                     con.Open();
 
-                    // Nota: Verifique se o nome da tabela no banco é 'Usuarios' ou 'Users' para não dar erro
-                    string query = "INSERT INTO Usuarios (Nome, Sobrenome, Email, Telefone, NivelAcesso, Senha) " +
-                                   "VALUES (@Nome, @Sobrenome, @Email, @Telefone, @Nivel, @Senha)";
+                    // 1. Buscar o ID da residência pelo código de 6 dígitos
+                    string sqlBusca = "SELECT Id FROM Residencias WHERE CodigoAcesso = @cod";
+                    int? resIdEncontrado = null;
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmdBusca = new SqlCommand(sqlBusca, con))
                     {
-                        cmd.Parameters.Add("@Nome", SqlDbType.VarChar).Value = txtNome.Text;
-                        cmd.Parameters.Add("@Sobrenome", SqlDbType.VarChar).Value = txtSobrenome.Text;
-                        cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
-                        cmd.Parameters.Add("@Telefone", SqlDbType.VarChar).Value = txtTelefone.Text;
+                        cmdBusca.Parameters.AddWithValue("@cod", txtCodigoVinculo.Text.Trim());
+                        var result = cmdBusca.ExecuteScalar();
+                        if (result != null) resIdEncontrado = (int)result;
+                    }
 
-                        // Captura o texto do ComboBox de forma segura
-                        string nivel = (cbNivelAcesso.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Morador";
-                        cmd.Parameters.Add("@Nivel", SqlDbType.VarChar).Value = nivel;
+                    if (resIdEncontrado == null)
+                    {
+                        MessageBox.Show("Código de Residência não encontrado! Verifique com o Administrador.");
+                        return;
+                    }
 
-                        // Salva a senha com Hash para segurança
-                        cmd.Parameters.Add("@Senha", SqlDbType.VarChar).Value = ComputeHash(txtSenha.Password);
+                    // 2. Inserir o novo familiar já vinculado ao ID encontrado
+                    string sqlInsert = @"INSERT INTO Users (Username, Password, Email, Phone, Name, LastName, ResidenciaId, AccessLevel) 
+                                       VALUES (@user, @pass, @email, @phone, @name, @last, @resId, 'Morador')";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlInsert, con))
+                    {
+                        cmd.Parameters.AddWithValue("@user", txtEmailUser.Text.Trim());
+                        cmd.Parameters.AddWithValue("@pass", HashFamiliar(txtSenhaUser.Password));
+                        cmd.Parameters.AddWithValue("@email", txtEmailUser.Text.Trim());
+                        cmd.Parameters.AddWithValue("@phone", txtPhoneUser.Text.Trim());
+                        cmd.Parameters.AddWithValue("@name", txtNomeUser.Text.Trim());
+                        cmd.Parameters.AddWithValue("@last", txtSobrenomeUser.Text.Trim());
+                        cmd.Parameters.AddWithValue("@resId", resIdEncontrado);
 
                         cmd.ExecuteNonQuery();
-
-                        MessageBox.Show("Usuário cadastrado com sucesso!", "IA HOME", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"{txtNomeUser.Text} cadastrado e vinculado à residência!");
                         LimparCampos();
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro técnico ao salvar: " + ex.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Erro: " + ex.Message);
             }
         }
 
-        // Métodos de evento vazios (podem ser removidos se não forem usados no XAML)
-        private void txtNome_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void txtSobrenome_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void txtEmail_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void txtTelefone_TextChanged(object sender, TextChangedEventArgs e) { }
-        private void cbNivelAcesso_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+        private void LimparCampos()
+        {
+            txtNomeUser.Clear(); txtSobrenomeUser.Clear(); txtEmailUser.Clear();
+            txtPhoneUser.Clear(); txtCodigoVinculo.Clear(); txtSenhaUser.Clear();
+        }
+
+        private string HashFamiliar(string senha)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(senha));
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in bytes) sb.Append(b.ToString("x2"));
+                return sb.ToString();
+            }
+        }
     }
 }

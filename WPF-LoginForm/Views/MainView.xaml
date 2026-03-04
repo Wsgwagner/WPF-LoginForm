@@ -24,30 +24,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="ActionButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Opacity" Value="0.7"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="DashboardCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="#15FFFFFF"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Width" Value="260"/>
-            <Setter Property="Height" Value="160"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#20FFFFFF"/>
-        </Style>
     </Window.Resources>
 
     <Border CornerRadius="25" BorderThickness="2">
@@ -76,82 +52,52 @@
                     <TextBlock Text="SISTEMA INTELIGENTE" Foreground="#28AEED" FontSize="10" HorizontalAlignment="Center" Margin="0,0,0,40" Opacity="0.7"/>
 
                     <Button Content="🏠  PAINEL PRINCIPAL" Style="{StaticResource MenuButtonStyle}" Click="ShowDashboard"/>
+                    <Button Content="🏡  CADASTRAR RESIDÊNCIA" Style="{StaticResource MenuButtonStyle}" Click="ShowCadastroResidencia"/>
                     <Button Content="👤  CADASTRAR USUÁRIO" Style="{StaticResource MenuButtonStyle}" Click="ShowCadastroUsuario"/>
                     <Button Content="⚙️  CADASTRAR EQUIPAMENTO" Style="{StaticResource MenuButtonStyle}" Click="ShowCadastroEquipamento"/>
                     <Button Content="📍  MEUS CÔMODOS" Style="{StaticResource MenuButtonStyle}" Click="ShowComodos"/>
-                    <Button Content="📝  GERENCIAR DADOS" 
-        Style="{StaticResource MenuButtonStyle}" 
-        Foreground="White" 
-        Click="OpenManagementWindow"/>
 
-                    <Button Content="🚪  SAIR" Style="{StaticResource MenuButtonStyle}" 
-                            Foreground="#DA34AE" Margin="0,220,0,0" Click="CloseApp"/>
+                    <Button Content="📝  GERENCIAR DADOS" Style="{StaticResource MenuButtonStyle}" Click="OpenManagementWindow"/>
+
+                    <Button Content="🚪  SAIR" Style="{StaticResource MenuButtonStyle}" Foreground="#DA34AE" Margin="0,180,0,0" Click="CloseApp"/>
                 </StackPanel>
             </Grid>
 
             <Grid Grid.Column="1" Margin="40">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,30">
                     <TextBlock x:Name="txtTituloPagina" Text="PAINEL PRINCIPAL" Foreground="White" FontSize="32" FontWeight="Light"/>
-                    <TextBlock Text="Gerencie seus dispositivos e usuários cadastrados." Foreground="Gray" FontSize="14"/>
+                    <TextBlock Text="Gerencie seus dispositivos e residências." Foreground="Gray" FontSize="14"/>
                 </StackPanel>
 
-                <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20"/>
+                <ContentControl x:Name="MainContent" Grid.Row="1" Panel.ZIndex="2"/>
 
-                <ContentControl x:Name="MainContent" Grid.Row="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                        <StackPanel>
-                            <TextBlock x:Name="txtVazio" Text="Nenhum item encontrado." 
-                                       Foreground="Gray" FontSize="16" HorizontalAlignment="Center" 
-                                       VerticalAlignment="Center" Margin="0,100,0,0" Visibility="Collapsed"/>
-
-                            <ItemsControl x:Name="ItemsDashboard">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Style="{StaticResource DashboardCardStyle}">
-                                            <Grid>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                    <Button Content="✎" ToolTip="Editar" 
-                                                            Style="{StaticResource ActionButtonStyle}" 
-                                                            Foreground="#28AEED"
-                                                            Click="Edit_Click"
-                                                            Tag="{Binding}"/>
-
-                                                    <Button Content="✕" ToolTip="Excluir" 
-                                                            Style="{StaticResource ActionButtonStyle}" 
-                                                            Foreground="#DA34AE" Margin="5,0,0,0"
-                                                            Click="Delete_Click"
-                                                            Tag="{Binding}"/>
-                                                </StackPanel>
-
-                                                <StackPanel VerticalAlignment="Top" Margin="0,0,40,0">
-                                                    <TextBlock Text="{Binding Nome}" Foreground="White" FontSize="18" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding Comodo}" Foreground="#28AEED" FontSize="12"/>
-                                                </StackPanel>
-
-                                                <StackPanel VerticalAlignment="Bottom">
-                                                    <Separator Background="#20FFFFFF" Margin="0,10"/>
-                                                    <TextBlock Text="{Binding Tipo}" Foreground="Gray" FontSize="11" HorizontalAlignment="Right"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </ContentControl>
+                <ScrollViewer x:Name="ScrollCards" Grid.Row="1" VerticalScrollBarVisibility="Auto" Panel.ZIndex="1">
+                    <ItemsControl ItemsSource="{Binding MeusEquipamentos}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="200" Height="120" Margin="0,0,20,20" CornerRadius="15" BorderThickness="1" BorderBrush="#30FFFFFF" Background="#15FFFFFF">
+                                    <Grid Margin="15">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Nome}" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Tipo}" Foreground="#28AEED" FontSize="12"/>
+                                            <TextBlock Text="{Binding Status}" Foreground="LightGreen" FontSize="10" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </Border>

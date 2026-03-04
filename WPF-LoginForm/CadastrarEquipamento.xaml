@@ -4,73 +4,49 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
-
-    <UserControl.Resources>
-        <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="#20FFFFFF"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10,0"/>
-            <Setter Property="Margin" Value="0,5,0,20"/>
-        </Style>
-    </UserControl.Resources>
+             d:DesignHeight="550" d:DesignWidth="600">
 
     <Grid Margin="20">
-        <Border Background="#15000000" CornerRadius="20" Padding="35" MaxWidth="550" HorizontalAlignment="Left" VerticalAlignment="Top" Height="480">
+        <Border Background="#15FFFFFF" CornerRadius="20" Padding="40" VerticalAlignment="Top" MaxWidth="500">
             <StackPanel>
-                <TextBlock Text="CONFIGURAÇÃO DE DISPOSITIVO" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,5"/>
-                <Border Height="2" Width="40" Background="#DA34AE" HorizontalAlignment="Left" Margin="0,0,0,30"/>
+                <TextBlock Text="🔌 NOVO DISPOSITIVO" Foreground="#28AEED" FontSize="22" FontWeight="Bold" Margin="0,0,0,20"/>
 
-                <TextBlock Text="NOME DO EQUIPAMENTO" Foreground="LightGray" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtNomeEquip" Style="{StaticResource ModernTextBox}" TextChanged="txtNomeEquip_TextChanged"/>
+                <TextBlock Text="Nome do Dispositivo (Ex: Luz Principal)" Foreground="White" Opacity="0.7" FontSize="12"/>
+                <TextBox x:Name="txtNomeEquip" Height="35" Margin="0,5,0,20" Background="#20FFFFFF" Foreground="White" VerticalContentAlignment="Center" Padding="10,0"/>
 
-                <Grid Margin="0,0,0,20">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="TIPO (DIGITE O SEU)" Foreground="LightGray" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                        <ComboBox x:Name="cbTipo" Height="35" IsEditable="True" SelectionChanged="cbTipo_SelectionChanged">
-                            <ComboBoxItem Content="Luz"/>
-                            <ComboBoxItem Content="Ar Condicionado"/>
-                            <ComboBoxItem Content="Câmera"/>
-                            <ComboBoxItem Content="Smart TV"/>
+                        <TextBlock Text="Tipo" Foreground="White" Opacity="0.7" FontSize="12"/>
+                        <ComboBox x:Name="cbTipo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="Iluminação" IsSelected="True"/>
+                            <ComboBoxItem Content="Climatização"/>
+                            <ComboBoxItem Content="Segurança"/>
+                            <ComboBoxItem Content="Eletrodoméstico"/>
                         </ComboBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="CÔMODO" Foreground="LightGray" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtComodo" Style="{StaticResource ModernTextBox}" Margin="0" TextChanged="txtComodo_TextChanged"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Cômodo" Foreground="White" Opacity="0.7" FontSize="12"/>
+                        <ComboBox x:Name="cbComodo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="Sala de Estar" IsSelected="True"/>
+                            <ComboBoxItem Content="Quarto Principal"/>
+                            <ComboBoxItem Content="Cozinha"/>
+                            <ComboBoxItem Content="Garagem"/>
+                        </ComboBox>
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="STATUS DO DISPOSITIVO" Foreground="LightGray" FontSize="11" FontWeight="SemiBold" Margin="0,10,0,10"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                    <RadioButton x:Name="rbAtivo" Content="Ativo" Foreground="White" IsChecked="True" Margin="0,0,25,0" Cursor="Hand" Checked="rbAtivo_Checked"/>
-                    <RadioButton x:Name="rbInativo" Content="Inativo" Foreground="White" Cursor="Hand" Checked="rbInativo_Checked"/>
-                </StackPanel>
-
-                <Button Content="SALVAR DISPOSITIVO" 
-                        Click="BtnSalvarEquip_Click"
-                        Height="45" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
-                    <Button.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Color="#462AD8" Offset="0"/>
-                            <GradientStop Color="#DA34AE" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Button.Background>
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
+                <Button Content="ADICIONAR À MINHA CASA" Height="45" Background="#462AD8" Foreground="White" FontSize="14" FontWeight="Bold" Click="BtnSalvarEquipamento_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </Button.Resources>
                 </Button>
             </StackPanel>
         </Border>

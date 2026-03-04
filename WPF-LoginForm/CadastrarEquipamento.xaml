@@ -22,7 +22,7 @@
 
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
                         <TextBlock Text="Tipo" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <ComboBox x:Name="cbTipo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center">
+                        <ComboBox x:Name="cbTipo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center" IsEditable="True">
                             <ComboBoxItem Content="Iluminação" IsSelected="True"/>
                             <ComboBoxItem Content="Climatização"/>
                             <ComboBoxItem Content="Segurança"/>
@@ -32,7 +32,7 @@
 
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="Cômodo" Foreground="White" Opacity="0.7" FontSize="12"/>
-                        <ComboBox x:Name="cbComodo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center">
+                        <ComboBox x:Name="cbComodo" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center" IsEditable="True">
                             <ComboBoxItem Content="Sala de Estar" IsSelected="True"/>
                             <ComboBoxItem Content="Quarto Principal"/>
                             <ComboBoxItem Content="Cozinha"/>
@@ -55,19 +55,7 @@
                             <Setter Property="CornerRadius" Value="10"/>
                         </Style>
                     </Button.Resources>
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Background" Value="#222222"/>
-                                    <Setter Property="Foreground" Value="Gray"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
                 </Button>
-
-                <TextBlock x:Name="txtStatusAcesso" Text="" Foreground="#FF5555" FontSize="10" Margin="0,10,0,0" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
     </Grid>

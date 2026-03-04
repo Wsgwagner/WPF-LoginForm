@@ -28,12 +28,11 @@ namespace WPF_LoginForm.Views
 
             try
             {
-                var listaPlana = new List<dynamic>();
+                var listaPlana = new List<EquipamentoParaAgrupar>();
 
                 using (SqlConnection con = new SqlConnection(strCon))
                 {
                     con.Open();
-                    // Buscamos todos os equipamentos da residência do usuário
                     string sql = "SELECT Nome, Tipo, Comodo, Status FROM Equipamentos WHERE ResidenciaId = @resId";
 
                     using (SqlCommand cmd = new SqlCommand(sql, con))
@@ -43,7 +42,7 @@ namespace WPF_LoginForm.Views
                         {
                             while (dr.Read())
                             {
-                                listaPlana.Add(new
+                                listaPlana.Add(new EquipamentoParaAgrupar
                                 {
                                     Nome = dr["Nome"].ToString(),
                                     Tipo = dr["Tipo"].ToString(),
@@ -55,8 +54,7 @@ namespace WPF_LoginForm.Views
                     }
                 }
 
-                // A MÁGICA DO AGRUPAMENTO:
-                // Pegamos a lista do banco e agrupamos pelo nome do cômodo
+                // CORREÇÃO DA SINTAXE LINQ (Evita erro de Tupla e g não existe)
                 var dadosAgrupados = listaPlana
                     .GroupBy(x => x.Comodo)
                     .Select(g => new ComodoAgrupado
@@ -70,13 +68,31 @@ namespace WPF_LoginForm.Views
                         }).ToList()
                     }).ToList();
 
-                // Enviamos para o ItemsControl do XAML
                 icComodos.ItemsSource = dadosAgrupados;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao carregar cômodos: " + ex.Message);
+                MessageBox.Show("Erro ao carregar cômodos: " + ex.Message, "IA HOME", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+    }
+
+    // Classes renomeadas internamente para evitar ambiguidade com o resto do projeto
+    public class ComodoAgrupado
+    {
+        public string NomeComodo { get; set; }
+        public List<EquipamentoSimples> Equipamentos { get; set; }
+    }
+
+    public class EquipamentoSimples
+    {
+        public string Nome { get; set; }
+        public string Tipo { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class EquipamentoParaAgrupar : EquipamentoSimples
+    {
+        public string Comodo { get; set; }
     }
 }

@@ -31,17 +31,58 @@
                                                 <Border Background="#20FFFFFF" CornerRadius="10" Margin="0,5" Padding="10">
                                                     <StackPanel>
                                                         <Grid>
-                                                            <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" Foreground="#28AEED"/>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" Foreground="#28AEED"/>
+                                                                <TextBlock Text="{Binding Tipo, StringFormat=' ({0})'}" FontSize="10" Foreground="Gray" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                                            </StackPanel>
                                                             <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding Status}" Cursor="Hand"/>
                                                         </Grid>
 
                                                         <StackPanel Margin="0,10,0,0">
+                                                            <StackPanel.Style>
+                                                                <Style TargetType="StackPanel">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Tipo}" Value="Iluminação">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </StackPanel.Style>
                                                             <TextBlock Text="Intensidade" FontSize="10" Opacity="0.7" Foreground="White"/>
                                                             <Slider Minimum="0" Maximum="100" Value="{Binding Intensidade}"/>
                                                         </StackPanel>
 
-                                                        <Button Content="Visualizar Câmera 🎥" Margin="0,10,0,0" 
-                                                                Background="#462AD8" Foreground="White" BorderThickness="0" Height="30"/>
+                                                        <StackPanel Margin="0,10,0,0">
+                                                            <StackPanel.Style>
+                                                                <Style TargetType="StackPanel">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Tipo}" Value="Segurança">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </StackPanel.Style>
+                                                            <Button Content="Visualizar Câmera 🎥" Click="BtnCamera_Click" Tag="{Binding Nome}"
+                                                                    Background="#462AD8" Foreground="White" BorderThickness="0" Height="30" Margin="0,0,0,5"/>
+                                                            <Slider Minimum="1" Maximum="10" Value="1"/>
+                                                        </StackPanel>
+
+                                                        <StackPanel Margin="0,10,0,0">
+                                                            <StackPanel.Style>
+                                                                <Style TargetType="StackPanel">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Tipo}" Value="Acesso">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </StackPanel.Style>
+                                                            <Button Content="Comando de Acesso 🔓" Background="#DA34AE" Foreground="White" 
+                                                                    BorderThickness="0" Height="30" Click="BtnAcesso_Click" Tag="{Binding Nome}"/>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                 </Border>
                                             </DataTemplate>

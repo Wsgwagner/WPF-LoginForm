@@ -1,91 +1,87 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Data.SqlClient;
-using System;
 
 namespace WPF_LoginForm.Views
 {
     public partial class MainView : Window
     {
-        private readonly string strCon = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
-
         public MainView()
         {
             InitializeComponent();
+            // Inicia o sistema carregando o Painel Principal
             ShowDashboard(null, null);
         }
 
+        // 1. Método para o Painel Principal
         private void ShowDashboard(object sender, RoutedEventArgs e)
         {
-            txtTituloPagina.Text = "PAINEL PRINCIPAL";
-            MainContent.Content = null;
-            ScrollCards.Visibility = Visibility.Visible;
-            CarregarCardsRapidos();
-        }
-
-        private void CarregarCardsRapidos()
-        {
-            // Lógica simples para mostrar equipamentos no painel principal
-            ObservableCollection<dynamic> lista = new ObservableCollection<dynamic>();
             try
             {
-                using (SqlConnection con = new SqlConnection(strCon))
-                {
-                    con.Open();
-                    string sql = "SELECT Nome, Tipo FROM Equipamentos WHERE ResidenciaId = @rid";
-                    using (SqlCommand cmd = new SqlCommand(sql, con))
-                    {
-                        // Se não estiver logado, usa ID 1 para teste
-                        cmd.Parameters.AddWithValue("@rid", SessaoSistema.ResidenciaId <= 0 ? 1 : SessaoSistema.ResidenciaId);
-                        using (SqlDataReader dr = cmd.ExecuteReader())
-                            while (dr.Read()) lista.Add(new { Nome = dr["Nome"].ToString(), Tipo = dr["Tipo"].ToString() });
-                    }
-                }
-                icEquipamentos.ItemsSource = lista;
+                txtTituloPagina.Text = "CENTRAL DE AUTOMAÇÃO";
+                txtSubtitulo.Text = "Gerencie seus cômodos e dispositivos em tempo real.";
+
+                // Injeta a DashboardView no ContentControl
+                MainContent.Content = new DashboardView();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Usando a variável 'ex' para detalhar o erro e remover o aviso do compilador
+                MessageBox.Show("Erro ao carregar o Painel: " + ex.Message);
+            }
         }
 
-        private void OpenManagementWindow(object sender, RoutedEventArgs e)
-        {
-            // CRÍTICO: Abre como janela independente para disparar o carregamento do banco
-            GerenciarDados tela = new GerenciarDados();
-            tela.Owner = this;
-            tela.ShowDialog();
-
-            // Ao fechar, volta para o dashboard
-            ShowDashboard(null, null);
-        }
-
+        // 2. Método para Cadastrar Residência
         private void ShowCadastroResidencia(object sender, RoutedEventArgs e)
         {
             txtTituloPagina.Text = "CADASTRAR RESIDÊNCIA";
-            ScrollCards.Visibility = Visibility.Collapsed;
+            txtSubtitulo.Text = "Adicione uma nova unidade ao sistema.";
             MainContent.Content = new CadastrarResidencia();
         }
 
+        // 3. Método para Cadastrar Usuário
         private void ShowCadastroUsuario(object sender, RoutedEventArgs e)
         {
             txtTituloPagina.Text = "CADASTRAR USUÁRIO";
-            ScrollCards.Visibility = Visibility.Collapsed;
+            txtSubtitulo.Text = "Gerencie moradores e níveis de acesso.";
             MainContent.Content = new CadastrarUsuario();
         }
 
+        // 4. Método para Cadastrar Equipamento
         private void ShowCadastroEquipamento(object sender, RoutedEventArgs e)
         {
             txtTituloPagina.Text = "CADASTRAR EQUIPAMENTO";
-            ScrollCards.Visibility = Visibility.Collapsed;
+            txtSubtitulo.Text = "Adicione novos dispositivos inteligentes.";
             MainContent.Content = new CadastrarEquipamento();
         }
 
+        // 5. Método para Meus Cômodos
         private void ShowComodos(object sender, RoutedEventArgs e)
         {
             txtTituloPagina.Text = "MEUS CÔMODOS";
-            ScrollCards.Visibility = Visibility.Collapsed;
+            txtSubtitulo.Text = "Visualize e organize seus ambientes.";
             MainContent.Content = new ComodosView();
         }
 
+        // 6. Método para Gerenciar Dados (Janela Independente)
+        private void OpenManagementWindow(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                GerenciarDados tela = new GerenciarDados();
+                tela.Owner = this;
+                tela.ShowDialog();
+
+                // Recarrega o dashboard ao fechar a tela de gerenciamento
+                ShowDashboard(null, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao abrir gerenciamento: " + ex.Message);
+            }
+        }
+
+        // Métodos Utilitários
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed) DragMove();

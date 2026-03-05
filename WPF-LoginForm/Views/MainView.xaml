@@ -56,7 +56,6 @@
                     <Button Content="👤  CADASTRAR USUÁRIO" Style="{StaticResource MenuButtonStyle}" Click="ShowCadastroUsuario"/>
                     <Button Content="⚙️  CADASTRAR EQUIPAMENTO" Style="{StaticResource MenuButtonStyle}" Click="ShowCadastroEquipamento"/>
                     <Button Content="📍  MEUS CÔMODOS" Style="{StaticResource MenuButtonStyle}" Click="ShowComodos"/>
-
                     <Button Content="📝  GERENCIAR DADOS" Style="{StaticResource MenuButtonStyle}" Click="OpenManagementWindow"/>
 
                     <Button Content="🚪  SAIR" Style="{StaticResource MenuButtonStyle}" Foreground="#DA34AE" Margin="0,180,0,0" Click="CloseApp"/>
@@ -71,33 +70,10 @@
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,30">
                     <TextBlock x:Name="txtTituloPagina" Text="PAINEL PRINCIPAL" Foreground="White" FontSize="32" FontWeight="Light"/>
-                    <TextBlock Text="Gerencie seus dispositivos e residências." Foreground="Gray" FontSize="14"/>
+                    <TextBlock x:Name="txtSubtitulo" Text="Gerencie seus dispositivos." Foreground="Gray" FontSize="14"/>
                 </StackPanel>
 
-                <ContentControl x:Name="MainContent" Grid.Row="1" Panel.ZIndex="2"/>
-
-                <ScrollViewer x:Name="ScrollCards" Grid.Row="1" VerticalScrollBarVisibility="Auto" Panel.ZIndex="1">
-                    <ItemsControl x:Name="icEquipamentos">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Width="200" Height="120" Margin="0,0,20,20" CornerRadius="15" BorderThickness="1" BorderBrush="#30FFFFFF" Background="#15FFFFFF">
-                                    <Grid Margin="15">
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Nome}" Foreground="White" FontSize="16" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding Tipo}" Foreground="#28AEED" FontSize="12"/>
-                                            <TextBlock Text="Ativo" Foreground="LightGreen" FontSize="10" FontWeight="Bold"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                <ContentControl x:Name="MainContent" Grid.Row="1"/>
             </Grid>
         </Grid>
     </Border>

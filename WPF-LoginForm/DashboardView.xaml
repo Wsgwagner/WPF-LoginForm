@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="WPF_LoginForm.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="900">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="icComodos" Margin="10">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="15" BorderThickness="1" BorderBrush="#30FFFFFF" Background="#15FFFFFF" Margin="10" Width="300">
+                            <Expander Foreground="White" Background="Transparent" BorderThickness="0">
+                                <Expander.Header>
+                                    <Grid Height="50" Width="240">
+                                        <TextBlock Text="{Binding Nome}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Expander.Header>
+
+                                <Border Padding="15" Background="#10000000">
+                                    <ItemsControl ItemsSource="{Binding Equipamentos}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#20FFFFFF" CornerRadius="10" Margin="0,5" Padding="10">
+                                                    <StackPanel>
+                                                        <Grid>
+                                                            <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" Foreground="#28AEED"/>
+                                                            <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding Status}" Cursor="Hand"/>
+                                                        </Grid>
+
+                                                        <StackPanel Margin="0,10,0,0">
+                                                            <TextBlock Text="Intensidade" FontSize="10" Opacity="0.7" Foreground="White"/>
+                                                            <Slider Minimum="0" Maximum="100" Value="{Binding Intensidade}"/>
+                                                        </StackPanel>
+
+                                                        <Button Content="Visualizar Câmera 🎥" Margin="0,10,0,0" 
+                                                                Background="#462AD8" Foreground="White" BorderThickness="0" Height="30"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Expander>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

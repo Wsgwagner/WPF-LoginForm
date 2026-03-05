@@ -48,23 +48,18 @@
                 <Border Background="#10FFFFFF" CornerRadius="10" Padding="15" Margin="0,0,0,10">
                     <StackPanel>
                         <TextBlock x:Name="txtTituloEdicao" Text="📝 EDITAR SELECIONADO" Foreground="#28AEED" FontWeight="Bold" Margin="0,0,0,10"/>
-
                         <UniformGrid Columns="2">
                             <StackPanel Margin="5">
                                 <TextBlock Text="Nome" Foreground="Gray" FontSize="11"/>
                                 <TextBox x:Name="txtNome" Text="{Binding SelectedItem.Nome, ElementName=dgGerenciamento}" Background="#20FFFFFF" Foreground="White" Padding="5"/>
                             </StackPanel>
-
                             <StackPanel Margin="5">
-                                <TextBlock Text="Status do Equipamento" Foreground="Gray" FontSize="11"/>
+                                <TextBlock Text="Status" Foreground="Gray" FontSize="11"/>
                                 <ComboBox x:Name="cbStatus" Background="#20FFFFFF" Padding="5">
                                     <ComboBoxItem Content="Ligado"/>
                                     <ComboBoxItem Content="Desligado"/>
                                 </ComboBox>
                             </StackPanel>
-                        </UniformGrid>
-
-                        <UniformGrid Columns="2">
                             <StackPanel Margin="5">
                                 <TextBlock x:Name="lblComodo" Text="Local / Email" Foreground="Gray" FontSize="11"/>
                                 <TextBox x:Name="txtComodo" Text="{Binding SelectedItem.Comodo, ElementName=dgGerenciamento}" Background="#20FFFFFF" Foreground="White" Padding="5"/>
@@ -76,7 +71,6 @@
                         </UniformGrid>
 
                         <StackPanel x:Name="pnlSeguranca" Visibility="Collapsed" Margin="0,10,0,0">
-                            <TextBlock Text="🔐 ALTERAR SENHA (USUÁRIOS)" Foreground="#28AEED" FontSize="11" Margin="5,0,0,5"/>
                             <UniformGrid Columns="2">
                                 <StackPanel Margin="5">
                                     <TextBlock Text="Senha Atual" Foreground="Gray" FontSize="10"/>
@@ -90,8 +84,8 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                            <Button Content="EXCLUIR" Click="DeleteAction" Margin="5" Padding="20,8" Background="#FF4444" Foreground="White" FontWeight="Bold"/>
-                            <Button Content="SALVAR ALTERAÇÕES" Click="EditAction" Margin="5" Padding="20,8" Background="#462AD8" Foreground="White" FontWeight="Bold"/>
+                            <Button x:Name="btnExcluir" Content="EXCLUIR" Click="DeleteAction" Margin="5" Padding="20,8" Background="#FF4444" Foreground="White" FontWeight="Bold"/>
+                            <Button x:Name="btnSalvarGeral" Content="SALVAR ALTERAÇÕES" Click="EditAction" Margin="5" Padding="20,8" Background="#462AD8" Foreground="White" FontWeight="Bold"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -104,7 +98,7 @@
                             <TextBox x:Name="txtResEnd" Background="#20FFFFFF" Foreground="White" Margin="5" Padding="5"/>
                             <TextBox x:Name="txtResCidade" Background="#20FFFFFF" Foreground="White" Margin="5" Padding="5"/>
                         </UniformGrid>
-                        <Button Content="ATUALIZAR RESIDÊNCIA" Click="SaveResidencia_Click" Margin="5,10,5,0" Padding="8" Background="#28AEED" Foreground="White" FontWeight="Bold"/>
+                        <Button x:Name="btnSalvarResidencia" Content="ATUALIZAR RESIDÊNCIA" Click="SaveResidencia_Click" Margin="5,10,5,0" Padding="8" Background="#28AEED" Foreground="White" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
             </StackPanel>

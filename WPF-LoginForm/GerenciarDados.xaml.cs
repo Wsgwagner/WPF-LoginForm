@@ -18,13 +18,11 @@ namespace WPF_LoginForm.Views
             InitializeComponent();
             this.DataContext = this;
 
-            // Lógica de Seleção
             dgGerenciamento.SelectionChanged += (s, e) => {
                 var item = dgGerenciamento.SelectedItem as ItemGerenciaModel;
                 if (item != null)
                 {
                     pnlSeguranca.Visibility = (item.Categoria == "USUÁRIO") ? Visibility.Visible : Visibility.Collapsed;
-                    cbStatus.IsEnabled = (item.Categoria == "EQUIPAMENTO");
                     cbStatus.Text = item.Status;
                 }
             };
@@ -33,7 +31,28 @@ namespace WPF_LoginForm.Views
                 if (SessaoSistema.ResidenciaId <= 0) SessaoSistema.ResidenciaId = 1;
                 CarregarDadosBanco();
                 CarregarDadosResidencia();
+
+                // TRAVA DE SEGURANÇA
+                if (SessaoSistema.AccessLevel != "Administrador")
+                    BloquearParaMorador();
             };
+        }
+
+        private void BloquearParaMorador()
+        {
+            // Bloqueia a tabela e os campos
+            dgGerenciamento.IsReadOnly = true;
+            txtNome.IsReadOnly = txtComodo.IsReadOnly = txtTipo.IsReadOnly = true;
+            txtResNome.IsReadOnly = txtResEnd.IsReadOnly = txtResCidade.IsReadOnly = true;
+            cbStatus.IsEnabled = false;
+            txtSenhaAntiga.IsEnabled = txtSenhaNova.IsEnabled = false;
+
+            // Esconde os botões
+            btnSalvarGeral.Visibility = Visibility.Collapsed;
+            btnSalvarResidencia.Visibility = Visibility.Collapsed;
+            btnExcluir.Visibility = Visibility.Collapsed;
+
+            txtTituloEdicao.Text = "🔒 MODO VISUALIZAÇÃO (APENAS LEITURA)";
         }
 
         private void CarregarDadosBanco()
@@ -55,25 +74,24 @@ namespace WPF_LoginForm.Views
                         using (SqlDataReader dr = cmd.ExecuteReader())
                             while (dr.Read()) ListaGeral.Add(new ItemGerenciaModel
                             {
-                                Id = Convert.ToInt32(dr["Id"]),
-                                Nome = dr["Nome"].ToString(),
-                                Tipo = dr["Tipo"].ToString(),
-                                Comodo = dr["Comodo"].ToString(),
-                                Status = dr["Status"].ToString(),
-                                Categoria = dr["Cat"].ToString(),
-                                Senha = dr["Pwd"].ToString()
+                                Id = Convert.ToInt32(dr[0]),
+                                Nome = dr[1].ToString(),
+                                Tipo = dr[2].ToString(),
+                                Comodo = dr[3].ToString(),
+                                Status = dr[4].ToString(),
+                                Categoria = dr[5].ToString(),
+                                Senha = dr[6].ToString()
                             });
                     }
                 }
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            catch (Exception ex) { MessageBox.Show("Erro SQL: " + ex.Message); }
         }
 
         private void EditAction(object sender, RoutedEventArgs e)
         {
             var item = dgGerenciamento.SelectedItem as ItemGerenciaModel;
             if (item == null) return;
-
             try
             {
                 using (SqlConnection con = new SqlConnection(strCon))
@@ -81,7 +99,6 @@ namespace WPF_LoginForm.Views
                     con.Open();
                     if (item.Categoria == "USUÁRIO")
                     {
-                        // VALIDAÇÃO DE SENHA (SÓ SALVA SE A ANTIGA FOR IGUAL AO HASH)
                         if (!string.IsNullOrWhiteSpace(txtSenhaNova.Password))
                         {
                             if (HashHelper.GerarHash(txtSenhaAntiga.Password) != item.Senha)
@@ -102,21 +119,41 @@ namespace WPF_LoginForm.Views
                     }
                     else
                     {
-                        // SALVA O NOVO STATUS SELECIONADO NO COMBOBOX
-                        string novoStatus = cbStatus.Text;
                         string sql = "UPDATE Equipamentos SET Nome=@n, Tipo=@t, Comodo=@c, Status=@s WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(sql, con))
                         {
                             cmd.Parameters.AddWithValue("@n", txtNome.Text);
                             cmd.Parameters.AddWithValue("@t", txtTipo.Text);
                             cmd.Parameters.AddWithValue("@c", txtComodo.Text);
-                            cmd.Parameters.AddWithValue("@s", novoStatus);
+                            cmd.Parameters.AddWithValue("@s", cbStatus.Text);
                             cmd.Parameters.AddWithValue("@id", item.Id);
                             cmd.ExecuteNonQuery();
                         }
                     }
-                    MessageBox.Show("IA HOME: Dados e Senha atualizados!");
+                    MessageBox.Show("Dados atualizados!");
                     CarregarDadosBanco();
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        private void SaveResidencia_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(strCon))
+                {
+                    con.Open();
+                    string sql = "UPDATE Residencias SET NomeResidencia=@n, Endereco=@e, Cidade=@c WHERE Id=@rid";
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@n", txtResNome.Text);
+                        cmd.Parameters.AddWithValue("@e", txtResEnd.Text);
+                        cmd.Parameters.AddWithValue("@c", txtResCidade.Text);
+                        cmd.Parameters.AddWithValue("@rid", SessaoSistema.ResidenciaId);
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Residência atualizada!");
+                    }
                 }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -140,28 +177,6 @@ namespace WPF_LoginForm.Views
                 }
                 CarregarDadosBanco();
             }
-        }
-
-        private void SaveResidencia_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(strCon))
-                {
-                    con.Open();
-                    string sql = "UPDATE Residencias SET NomeResidencia=@n, Endereco=@e, Cidade=@c WHERE Id=@rid";
-                    using (SqlCommand cmd = new SqlCommand(sql, con))
-                    {
-                        cmd.Parameters.AddWithValue("@n", txtResNome.Text);
-                        cmd.Parameters.AddWithValue("@e", txtResEnd.Text);
-                        cmd.Parameters.AddWithValue("@c", txtResCidade.Text);
-                        cmd.Parameters.AddWithValue("@rid", SessaoSistema.ResidenciaId);
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("IA HOME: Residência atualizada!");
-                    }
-                }
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void CarregarDadosResidencia()

@@ -1,15 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Collections.ObjectModel;
+using System.Data.SqlClient;
+using System;
 
 namespace WPF_LoginForm.Views
 {
     public partial class MainView : Window
     {
+        private readonly string strCon = @"Server=(localdb)\MSSQLLocalDB;Database=WpfLogin;User Id=tds;Password=tds123;TrustServerCertificate=True;Encrypt=False;";
+
         public MainView()
         {
             InitializeComponent();
-            ShowDashboard(null, null); // Inicia no painel principal
+            ShowDashboard(null, null);
         }
 
         private void ShowDashboard(object sender, RoutedEventArgs e)
@@ -17,6 +21,41 @@ namespace WPF_LoginForm.Views
             txtTituloPagina.Text = "PAINEL PRINCIPAL";
             MainContent.Content = null;
             ScrollCards.Visibility = Visibility.Visible;
+            CarregarCardsRapidos();
+        }
+
+        private void CarregarCardsRapidos()
+        {
+            // Lógica simples para mostrar equipamentos no painel principal
+            ObservableCollection<dynamic> lista = new ObservableCollection<dynamic>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(strCon))
+                {
+                    con.Open();
+                    string sql = "SELECT Nome, Tipo FROM Equipamentos WHERE ResidenciaId = @rid";
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        // Se não estiver logado, usa ID 1 para teste
+                        cmd.Parameters.AddWithValue("@rid", SessaoSistema.ResidenciaId <= 0 ? 1 : SessaoSistema.ResidenciaId);
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                            while (dr.Read()) lista.Add(new { Nome = dr["Nome"].ToString(), Tipo = dr["Tipo"].ToString() });
+                    }
+                }
+                icEquipamentos.ItemsSource = lista;
+            }
+            catch { }
+        }
+
+        private void OpenManagementWindow(object sender, RoutedEventArgs e)
+        {
+            // CRÍTICO: Abre como janela independente para disparar o carregamento do banco
+            GerenciarDados tela = new GerenciarDados();
+            tela.Owner = this;
+            tela.ShowDialog();
+
+            // Ao fechar, volta para o dashboard
+            ShowDashboard(null, null);
         }
 
         private void ShowCadastroResidencia(object sender, RoutedEventArgs e)
@@ -45,26 +84,6 @@ namespace WPF_LoginForm.Views
             txtTituloPagina.Text = "MEUS CÔMODOS";
             ScrollCards.Visibility = Visibility.Collapsed;
             MainContent.Content = new ComodosView();
-        }
-
-        // MÉTODO RESTAURADO PARA GERENCIAR DADOS
-        private void OpenManagementWindow(object sender, RoutedEventArgs e)
-        {
-            txtTituloPagina.Text = "GERENCIAR DADOS";
-            ScrollCards.Visibility = Visibility.Collapsed;
-
-            // Aqui você deve carregar sua View de gerenciamento quando criá-la
-            // MainContent.Content = new GerenciarDadosView();
-
-            // Exemplo temporário para não dar erro:
-            MainContent.Content = new System.Windows.Controls.TextBlock
-            {
-                Text = "Aqui você poderá editar e excluir seus dados em breve.",
-                Foreground = Brushes.Gray,
-                FontSize = 18,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

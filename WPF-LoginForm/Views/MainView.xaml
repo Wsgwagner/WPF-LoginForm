@@ -77,7 +77,7 @@
                 <ContentControl x:Name="MainContent" Grid.Row="1" Panel.ZIndex="2"/>
 
                 <ScrollViewer x:Name="ScrollCards" Grid.Row="1" VerticalScrollBarVisibility="Auto" Panel.ZIndex="1">
-                    <ItemsControl ItemsSource="{Binding MeusEquipamentos}">
+                    <ItemsControl x:Name="icEquipamentos">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Horizontal"/>
@@ -90,7 +90,7 @@
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Nome}" Foreground="White" FontSize="16" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding Tipo}" Foreground="#28AEED" FontSize="12"/>
-                                            <TextBlock Text="{Binding Status}" Foreground="LightGreen" FontSize="10" FontWeight="Bold"/>
+                                            <TextBlock Text="Ativo" Foreground="LightGreen" FontSize="10" FontWeight="Bold"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
